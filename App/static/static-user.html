@@ -32,20 +32,32 @@
             </p>
         </div>
         <div class="row">
-            <table>
-                <thead>
-                  <tr>
-                    <th>Id</th><th>Username</th>
-                  </tr>
-                </thead>
-                <tbody id="result">
-                
-                <tbody>
-            </table>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="main.js"></script>
-  </body>
-</html>
+          <body>
+            <header>
+                <h1>Workout Remixer</h1>
+            </header>
+            <main>
+                <section>
+                    <h2>Find a Workout</h2>
+                    <form method="post">
+                        <label for="workout_type">Workout Type:</label>
+                        <input type="text" id="workout_type" name="workout_type" required>
+                        <label for="workout_duration">Workout Duration (minutes):</label>
+                        <input type="number" id="workout_duration" name="workout_duration" required>
+                        <button type="submit">Find Workout</button>
+                    </form>
+                </section>
+                {% if workout_data %}
+                <section>
+                    <h2>Workout Details</h2>
+                    <h3>{{ workout_data.name }}</h3>
+                    <p>{{ workout_data.description }}</p>
+                    <p>Duration: {{ workout_data.duration }} minutes</p>
+                    <button>Add to Routine</button>
+                </section>
+                {% endif %}
+            </main>
+            <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        </body>
+        </html>
+    {% endblock %}
