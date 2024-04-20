@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Workout Finder{% endblock %}
+{% block page %}Workout Finder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Find a Workout</h1>
+    <form method="post" action="{{ url_for('user_views.find_workout') }}">
+        <label for="muscle_group">Muscle Group:</label>
+        <input type="text" id="muscle_group" name="muscle_group" required>
+        <button type="submit" class="btn waves-effect waves-light">Find Workouts</button>
+    </form>
+</div>
+{% endblock %}

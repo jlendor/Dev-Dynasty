@@ -18,8 +18,10 @@
             {% if is_authenticated %}
             <li><a href="/">Home</a></li>
             <li><a href="/users">Workouts</a></li>
-                <li><a href="/identify">Identify</a></li>
-            <li><a href="/static/users">Users JS</a></li>
+            <li><a href="/identify">Identify</a></li>
+            <li><a href="{{ url_for('user_views.workout_finder') }}">Find a Workout</a>
+                >Users JS</a></li>
+            
             {% endif %}
         </ul>
         {% if is_authenticated %}

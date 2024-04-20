@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, jsonify, request, send_from_direct
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 
 from.index import index_views
+import requests
 
 from App.controllers import (
     create_user,
@@ -11,6 +12,26 @@ from App.controllers import (
 )
 
 user_views = Blueprint('user_views', __name__, template_folder='../templates')
+
+@user_views.route('/find_workout', methods=['POST'])
+def find_workout():
+    # Fetch user input from the form
+    muscle_group = request.form.get('muscle_group')
+    url = "https://work-out-api1.p.rapidapi.com/search"
+    querystring = {"Muscles": muscle_group}  # Dynamic query based on user input
+    headers = {
+        "X-RapidAPI-Key": "f76d95c985msh28414cd71cc27d0p1d550fjsn1d516f060187",
+        "X-RapidAPI-Host": "work-out-api1.p.rapidapi.com"
+    }
+
+    response = requests.get(url, headers=headers, params=querystring)
+
+    if response.status_code == 200:
+        workouts = response.json()
+        return render_template('workouts.html', workouts=workouts)
+    else:
+        return jsonify({"error": "Failed to fetch workouts", "status_code": response.status_code})
+
 
 @user_views.route('/users', methods=['GET'])
 def get_user_page():
@@ -35,8 +56,11 @@ def create_user_endpoint():
     user = create_user(data['username'], data['password'])
     return jsonify({'message': f"user {user.username} created with id {user.id}"})
 
-@user_views.route('/static/users', methods=['GET'])
-def static_user_page():
-  return send_from_directory('static', 'static-user.html')
+@user_views.route('/workout-finder')
+def workout_finder():
+    return render_template('workout_finder.html')
 
 
+#i like pie
+#apple?
+#yes
