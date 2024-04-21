@@ -71,6 +71,63 @@ def workout_finder():
 
 
 
+@user_views.route('/add_routine', methods=['POST'])
+@jwt_required()
+def add_routine():
+    routine_name = request.form.get('routine_name')
+    new_routine = Routine(name=routine_name, user_id=current_user.id)
+    db.session.add(new_routine)
+    db.session.commit()
+    flash('Routine created successfully!')
+    return redirect(url_for('user_views.manage_routines'))
+
+@user_views.route('/manage_routines')
+@jwt_required()
+def manage_routines():
+    routines = Routine.query.filter_by(user_id=current_user.id).all()
+    return render_template('routines.html', routines=routines)
+
+@user_views.route('/add_workout_to_routine', methods=['POST'])
+@jwt_required()
+def add_workout_to_routine():
+    routine_id = request.form.get('routine_id')
+    workout_id = request.form.get('workout_id')
+    routine = Routine.query.get(routine_id)
+    workout = Workout.query.get(workout_id)
+    if workout not in routine.workouts:
+        routine.workouts.append(workout)
+        db.session.commit()
+        flash('Workout added to routine successfully!')
+    else:
+        flash('Workout already in routine')
+    return redirect(url_for('user_views.manage_routines'))
+
+@user_views.route('/remove_workout_from_routine', methods=['GET'])
+@jwt_required()
+def remove_workout_from_routine():
+    routine_id = request.args.get('routine_id')
+    workout_id = request.args.get('workout_id')
+    routine = Routine.query.get(routine_id)
+    workout = Workout.query.get(workout_id)
+    if workout in routine.workouts:
+        routine.workouts.remove(workout)
+        db.session.commit()
+        flash('Workout removed from routine successfully!')
+    return redirect(url_for('user_views.manage_routines'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #i like pie
 #apple?
 #yes #g

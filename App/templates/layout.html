@@ -11,24 +11,20 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-<nav class="purple">
+<nav class="orange">
     <div class="nav-wrapper">
-        <a href="#!" class="brand-logo center">{% block page %}{% endblock %}</a>
-        <ul id="nav-mobile" class="left">
+        <a href="/" class="brand-logo left"><img src="{{ url_for('static', filename='images/logo2.png') }}" style="width:100px; height:50px; padding-left: 10px;"/></a>
+        <ul id="nav-mobile" class="right">
             {% if is_authenticated %}
-            <li><a href="/">Home</a></li>
+            
+
             <li><a href="/users">Workouts</a></li>
             <li><a href="/identify">Identify</a></li>
             <li><a href="{{ url_for('user_views.workout_finder') }}">Find a Workout</a>
                 >Users JS</a></li>
-            
+            <li><a href="/logout">Logout</a></li>
             {% endif %}
         </ul>
-        {% if is_authenticated %}
-            <ul id="nav-mobile" class="right">
-                <li><a href="/logout">Logout</a></li>
-            </ul>
-        {% endif %}
     </div>
 </nav>
 <style>
