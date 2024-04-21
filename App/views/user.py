@@ -20,7 +20,7 @@ def find_workout():
     url = "https://work-out-api1.p.rapidapi.com/search"
     querystring = {"Muscles": muscle_group}  # Dynamic query based on user input
     headers = {
-        "X-RapidAPI-Key": "f76d95c985msh28414cd71cc27d0p1d550fjsn1d516f060187",
+        "X-RapidAPI-Key": "e4da15d44bmshf6bc34dd6467518p191a19jsn70b01b907d7a",
         "X-RapidAPI-Host": "work-out-api1.p.rapidapi.com"
     }
 
@@ -56,9 +56,19 @@ def create_user_endpoint():
     user = create_user(data['username'], data['password'])
     return jsonify({'message': f"user {user.username} created with id {user.id}"})
 
+#@user_views.route('/workout-finder')
+#def workout_finder():
+ #   return render_template('workout_finder.html')
+
 @user_views.route('/workout-finder')
 def workout_finder():
-    return render_template('workout_finder.html')
+    muscle_groups = [
+        'Biceps', 'Triceps', 'Chest', 'Back', 'Legs', 
+        'Abs', 'Stretching', 'Warm Up', 'Lats', 'Hamstring', 
+        'Calves', 'Quadriceps', 'Trapezius', 'Shoulders', 'Glutes'
+    ]
+    return render_template('workout_finder.html', muscle_groups=muscle_groups)
+
 
 
 #i like pie

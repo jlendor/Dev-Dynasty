@@ -1,23 +1,25 @@
 {% extends "layout.html" %}
+{% block page %}Workouts{% endblock %}
 {% block content %}
-<body>
-    <header>
-        <nav>
-             <h1>Workouts</h1>
-        </nav>
-    </header>
-    <main>
-        {% for workout in workouts %}
-        <div class="col s3 m3 l3">
-            <div class="card collection">
-            <div class="card-content black-text">
-            <span class="card-title">{{ workout.Muscles}}</span>
-            <p>Workout: {{workout.WorkOut}}</p>
-            <p>Equipment : {{workout.Equipment}} </p>
-            <p>Description : {{workout.Explaination}}</p>
-        </div>
-       {% endfor %}
-    </main>
-</body>
-{% endblock %}
 
+<main>
+    <div class="row">
+            <div class="row">
+              {% for workout in workouts %}
+                <div class="col s11 m7 l2">
+                  <div class="card book-card" style="height: 365px;">
+                    <div class="card-content" style="height: 80%;">
+                      <span class="card-title">{{ workout.Muscles}}</span>
+                      <p>Workout: {{ workout.WorkOut }}</p>
+                      <p>Equipment: {{  workout.Equipment }}</p>
+                      <p>Eplaination: {{ workout.Explaination}}</p>
+                    </div>
+                    <div class="card-action">
+                        <button onclick="addToMyWorkouts('{{ workout.id }}')">Add</button>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+</main>
+{% endblock %}
