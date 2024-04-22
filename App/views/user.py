@@ -26,7 +26,7 @@ def find_workout():
         "X-RapidAPI-Host": "work-out-api1.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring)
+    response = request.get(url, headers=headers, params=querystring)
 
     if response.status_code == 200:
         workouts = response.json()
