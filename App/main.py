@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template
+
+from flask import Flask, render_template, request
 from flask_uploads import DOCUMENTS, IMAGES, TEXT, UploadSet, configure_uploads
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -14,8 +15,7 @@ from App.controllers import (
     add_auth_context
 )
 
-import requests
-import json
+
 
 from App.views import views
 

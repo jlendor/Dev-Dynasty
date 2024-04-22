@@ -1,3 +1,4 @@
+import requests
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from App.models import db, Workout, Routine
@@ -26,7 +27,7 @@ def find_workout():
         "X-RapidAPI-Host": "work-out-api1.p.rapidapi.com"
     }
 
-    response = request.get(url, headers=headers, params=querystring)
+    response = requests.get(url, headers=headers, params=querystring)
 
     if response.status_code == 200:
         workouts = response.json()
