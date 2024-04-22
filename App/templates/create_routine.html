@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h2>Create a New Routine</h2>
+    <form id="createRoutineForm" onsubmit="submitRoutineForm(); return false;">
+        <div class="input-field">
+            <input id="routine_name" name="routine_name" type="text" class="validate" required>
+            <label for="routine_name">Routine Name</label>
+        </div>
+        <ul id="selectedWorkoutsList" class="collection with-header">
+            <li class="collection-header"><h4>Selected Workouts</h4></li>
+        </ul>
+        <button type="submit" class="btn waves-effect waves-light">Create Routine</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const workoutId = urlParams.get('workoutId');
+    if (workoutId) {
+        addWorkoutToList(workoutId);
+    }
+});
+
+function addWorkoutToList(workoutId) {
+    // Simulated adding of a workout to the list. Replace with actual data fetching if necessary
+    const list = document.getElementById('selectedWorkoutsList');
+    const newItem = document.createElement('li');
+    newItem.className = 'collection-item';
+    newItem.textContent = `Workout ID: ${workoutId}`;  // Replace with actual workout details
+    list.appendChild(newItem);
+}
+
+function submitRoutineForm() {
+    const routineName = document.getElementById('routine_name').value;
+    const workouts = Array.from(document.querySelectorAll('#selectedWorkoutsList .collection-item'))
+                          .map(item => item.textContent.split(' - ')[1]);  // Assuming the ID is added at the end
+
+    fetch('/create_routine', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ routine_name: routineName, workouts: workouts })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Routine created successfully!');
+            window.location.href = '/routines';  // Redirect to the routines page or wherever appropriate
+        } else {
+            alert('Failed to create routine: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating routine.');
+    });
+}
+</script>
+{% endblock %}

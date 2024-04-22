@@ -1,6 +1,6 @@
 import os
 class Config:
-    RAPID_API_KEY = 'f76d95c985msh28414cd71cc27d0p1d550fjsn1d516f060187'
+    RAPID_API_KEY = 'e4da15d44bmshf6bc34dd6467518p191a19jsn70b01b907d7a'
 def load_config(app, overrides):
     if os.path.exists(os.path.join('./App', 'custom_config.py')):
         app.config.from_object('App.custom_config')

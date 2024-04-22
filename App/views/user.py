@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
+from App.models import db, Workout, Routine
 
 from.index import index_views
 import requests
@@ -12,6 +13,8 @@ from App.controllers import (
 )
 
 user_views = Blueprint('user_views', __name__, template_folder='../templates')
+
+
 
 @user_views.route('/find_workout', methods=['POST'])
 def find_workout():
@@ -31,6 +34,25 @@ def find_workout():
         return render_template('workouts.html', workouts=workouts)
     else:
         return jsonify({"error": "Failed to fetch workouts", "status_code": response.status_code})
+        
+def store_workouts(workouts):
+    for item in workouts:
+        # Check if the workout already exists to avoid duplication
+        if not Workout.query.filter_by(name=item['name']).first():
+            workout = Workout(
+                muscle_group=item['muscle_group'],
+                name=item['name'],
+                intensity_level=item.get('intensity_level', 'Moderate'),
+                beginner_sets=item.get('beginner_sets', ''),
+                intermediate_sets=item.get('intermediate_sets', ''),
+                expert_sets=item.get('expert_sets', ''),
+                equipment=item.get('equipment', 'None'),
+                explanation=item.get('explanation', ''),
+                long_explanation=item.get('long_explanation', ''),
+                video_url=item.get('video_url', '')
+            )
+            db.session.add(workout)
+    db.session.commit()
 
 
 @user_views.route('/users', methods=['GET'])
@@ -69,51 +91,48 @@ def workout_finder():
     ]
     return render_template('workout_finder.html', muscle_groups=muscle_groups)
 
+@user_views.route('/create_routine', methods=['GET', 'POST'])
+def create_routine():
+    if request.method == 'POST':
+        data = request.get_json()
+        routine_name = data['routine_name']
+        workout_ids = data['workouts']
+
+        # Assume a function to handle the logic of creating a routine
+        success = create_new_routine(routine_name, workout_ids, user_id)
+        if success:
+            return jsonify({'success': True})
+        else:
+            return jsonify({'error': 'Unable to create routine'}, 400)
+
+    return render_template('create_routine.html')
 
 
-@user_views.route('/add_routine', methods=['POST'])
+@user_views.route('/add_workout_to_routine/<int:workout_id>', methods=['POST'])
 @jwt_required()
-def add_routine():
-    routine_name = request.form.get('routine_name')
-    new_routine = Routine(name=routine_name, user_id=current_user.id)
-    db.session.add(new_routine)
-    db.session.commit()
-    flash('Routine created successfully!')
-    return redirect(url_for('user_views.manage_routines'))
+def add_workout_to_routine(workout_id):
+    current_user_id = get_jwt_identity()  # Get the identity from the JWT
 
-@user_views.route('/manage_routines')
-@jwt_required()
-def manage_routines():
-    routines = Routine.query.filter_by(user_id=current_user.id).all()
-    return render_template('routines.html', routines=routines)
-
-@user_views.route('/add_workout_to_routine', methods=['POST'])
-@jwt_required()
-def add_workout_to_routine():
-    routine_id = request.form.get('routine_id')
-    workout_id = request.form.get('workout_id')
-    routine = Routine.query.get(routine_id)
     workout = Workout.query.get(workout_id)
-    if workout not in routine.workouts:
-        routine.workouts.append(workout)
-        db.session.commit()
-        flash('Workout added to routine successfully!')
-    else:
-        flash('Workout already in routine')
-    return redirect(url_for('user_views.manage_routines'))
+    if not workout:
+        return jsonify({'status': 'error', 'message': 'Workout not found'}), 404
 
-@user_views.route('/remove_workout_from_routine', methods=['GET'])
-@jwt_required()
-def remove_workout_from_routine():
-    routine_id = request.args.get('routine_id')
-    workout_id = request.args.get('workout_id')
-    routine = Routine.query.get(routine_id)
-    workout = Workout.query.get(workout_id)
+    # Assuming the user has a default routine
+    routine = Routine.query.filter_by(user_id=current_user_id).first()
+    if not routine:
+        routine = Routine(user_id=current_user_id, name="Default Routine")
+        db.session.add(routine)
+
     if workout in routine.workouts:
-        routine.workouts.remove(workout)
-        db.session.commit()
-        flash('Workout removed from routine successfully!')
-    return redirect(url_for('user_views.manage_routines'))
+        return jsonify({'status': 'error', 'message': 'Workout already in routine'}), 409
+
+    routine.workouts.append(workout)
+    db.session.commit()
+
+    return jsonify({'status': 'success', 'message': 'Workout added successfully'})
+
+
+
 
 
 

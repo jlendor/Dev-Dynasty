@@ -4,22 +4,50 @@
 
 <main>
     <div class="row">
-            <div class="row">
-              {% for workout in workouts %}
+        <div class="row">
+            {% for workout in workouts %}
                 <div class="col s11 m7 l2">
-                  <div class="card book-card" style="height: 365px;">
-                    <div class="card-content" style="height: 80%;">
-                      <span class="card-title">{{ workout.Muscles}}</span>
-                      <p>Workout: {{ workout.WorkOut }}</p>
-                      <p>Equipment: {{  workout.Equipment }}</p>
-                      <p>Eplaination: {{ workout.Explaination}}</p>
+                    <div class="card book-card" style="height: 365px;">
+                        <div class="card-content" style="height: 80%;">i
+                            <span class="card-title">{{ workout.Muscles }}</span>
+                            <p>Workout: {{ workout.WorkOut }}</p>
+                            <p>Equipment: {{ workout.Equipment }}</p>
+                            <p>Explanation: {{ workout.Explaination }}</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="/add_workout_to_routine/{{workout.id}}"">Add</a>
+                        </div>
                     </div>
-                    <div class="card-action">
-                        <button onclick="addToMyWorkouts('{{ workout.id }}')">Add</button>
-                    </div>
-                  </div>
                 </div>
-                {% endfor %}
-              </div>
+            {% endfor %}
+        </div>
+    </div>
 </main>
-{% endblock %}
+<script>
+  function addWorkoutToRoutine(workoutId) {
+      const accessToken = 'your_jwt_token_here'; // Replace with the way you access the token
+      fetch(`/add_workout_to_routine/${workoutId}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+          }
+      })
+      .then(response => {
+          if (response.ok) {
+              return response.json();
+          } else {
+              throw new Error('Network response was not ok');
+          }
+      })
+      .then(data => {
+          alert(data.message);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('Error adding workout.');
+      });
+  }
+  </script>
+  {% endblock %}
+
